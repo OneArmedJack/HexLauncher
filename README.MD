@@ -1,131 +1,183 @@
-# Rust Overlay Suite
+# 🔲 HexLauncher
 
-A modular overlay toolkit for Rust. Each module runs independently
-and can be toggled on/off from the launcher without restarting.
+[![Version](https://img.shields.io/badge/version-2.2.0-blue)](https://github.com/OneArmedJack/HexLauncher)
+[![License](https://img.shields.io/badge/license-Commercial-red)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
 
----
-
-## Folder layout
-
-```
-RustOverlay/
-├── launcher.py                       ← Run this
-├── requirements.txt
-├── launcher_config.json              ← Auto-generated on first run
-└── modules/
-    ├── fight_review.py
-    ├── fight_review_config.json      ← Auto-generated
-    ├── recoil_control.py
-    ├── recoil_config.json            ← Auto-generated
-    ├── brightness_control.py
-    ├── brightness_config.json        ← Auto-generated
-    └── _template_custom_module.py   ← Copy this to make your own
-```
+A professional, stealth‑capable module manager for running scripts in any language (Python, Node, Go, Rust, etc.).  
+Designed for background automation, tool orchestration, and commercial distribution.
 
 ---
 
-## Setup
+## ✨ Features
+
+| Feature | Free | Pro |
+|---------|:----:|:---:|
+| **Module management** (start/stop/logs) | ✅ | ✅ |
+| **Built‑in code editor** (with syntax highlighting) | ✅ | ✅ |
+| **Embedded terminal** per module | ✅ | ✅ |
+| **Stealth mode** (hide window, alt+tab, rename to `Runtime Broker`) | ✅ | ✅ |
+| **System tray** (grey dot, no logo) | ✅ | ✅ |
+| **Resource monitoring** (CPU / RAM per module) | ✅ | ✅ |
+| **Activity feed** with log file | ✅ | ✅ |
+| **External editor integration** (VS Code, Notepad++, etc.) | ✅ | ✅ |
+| **Maximum modules** | 3 | Unlimited |
+| **Themes** (Dark only) | Dark | Dark + Light |
+| **No ads** | ❌ | ✅ |
+| **Priority support** | ❌ | ✅ |
+
+---
+
+## 🚀 Quick Start (End Users)
+
+1. **Download** the latest `RuntimeBroker.exe` from [Releases](https://github.com/OneArmedJack/HexLauncher/releases).
+2. **Place** the `.exe` anywhere (no installation required).
+3. **Double‑click** to launch.
+4. **Activate Pro** (optional) via the Dashboard → "Activate Pro" button.
+
+> **Note**: The executable is portable – it creates a `modules/` folder next to itself.  
+> All settings are stored in `config.json` and logs in `logs/`.
+
+---
+
+## 🛠️ For Developers (Building from source)
+
+### Prerequisites
+- Python 3.11 or higher
+- Git
+
+### Clone and install
 
 ```bash
-cd C:\Scripts\Rust\RustOverlay
+git clone https://github.com/OneArmedJack/HexLauncher.git
+cd HexLauncher
+python -m venv venv
+venv\Scripts\activate          # Windows
+# source venv/bin/activate    # Linux/macOS
 pip install -r requirements.txt
+```
+
+### Run from source
+
+```bash
 python launcher.py
 ```
 
+### Build executable (PyInstaller)
+
+```bash
+pip install pyinstaller
+pyinstaller launcher.spec --clean --onefile
+```
+
+The executable will be in `dist/RuntimeBroker.exe`.
+
 ---
 
-## Modules
+## 📦 How to Create a Module
 
-### ⚔ Fight Review
-Watches your health bar (pixel brightness) and detects:
-- Fight start (sudden brightness drop)
-- Hits taken (continued drops)
-- Death (health near zero)
-- Survival (cooldown expires without dying)
+Modules are placed in the `modules/` folder, each in its own subfolder.
 
-A small draggable HUD appears in the top-left of your screen.
+### Option A: Simple Python module
 
-**Config** (`modules/fight_review_config.json`):
+```
+modules/
+└── MyScript/
+    └── script.py
+```
+
+The launcher auto‑detects `script.py` and runs it with the same Python interpreter.
+
+### Option B: Any language using `module.json`
+
+```
+modules/
+└── MyNodeModule/
+    ├── module.json
+    └── server.js
+```
+
+**`module.json` example:**
+
 ```json
 {
-  "health_region": { "left": 1609, "top": 934, "width": 287, "height": 39 },
-  "health_drop_threshold": 8,
-  "cooldown_seconds": 5,
-  "sample_interval": 0.1
+    "name": "My Node Server",
+    "executable": "node",
+    "args": ["server.js"],
+    "working_dir": ".",
+    "env": {}
 }
 ```
-Adjust `health_region` to match your resolution if not 1920×1080.
+
+The launcher supports any executable (Node, Go, Rust, etc.).  
+Use `stopped` status to control the process.
 
 ---
 
-### 🎯 Recoil Control
-Applies downward (and optional sideward) mouse movement while left
-mouse is held to counteract weapon recoil.
+## 🔑 License & Activation
 
-**Default keybinds:**
-| Action        | Key |
-|---------------|-----|
-| Previous profile | F8 |
-| Next profile     | F9 |
+- **Free version** – limited to 3 modules, Dark theme only, no ads.
+- **Pro version** – unlimited modules, Light theme, no ads.
 
-Rebind at any time via the ⚙ Rebind button on the HUD.
+**To activate Pro**, click the “Activate Pro” button on the Dashboard and enter a valid license key.  
+The launcher verifies the key online (via Vercel). After successful activation, restart the launcher.
 
-**Weapon groups** (edit `modules/recoil_config.json`):
-```json
-{
-  "groups": [
-    {
-      "name": "Rifles",
-      "profiles": [
-        { "name": "AK-47", "x_pull": 0, "y_pull": 5, "tick_ms": 60, "active_button": "right" }
-      ]
-    }
-  ]
-}
+---
+
+## 🛡️ Stealth Mode
+
+- Renames window title to `Runtime Broker`
+- Removes window from Alt+Tab (`WS_EX_TOOLWINDOW`)
+- Hides main window (can be recalled by right‑clicking tray icon → “Show”)
+- Changes executable description to mimic `RuntimeBroker.exe` (if you modify the EXE metadata with Resource Hacker)
+
+> **Note**: The process will still appear in Task Manager, but with the name `RuntimeBroker.exe` (especially if you rename the `.exe` and edit its version info).
+
+---
+
+## 📁 File Structure (after first run)
+
 ```
-- `y_pull` — pixels to pull down per tick (start at 4–6 for AK)
-- `x_pull` — pixels to pull left/right
-- `tick_ms` — milliseconds between corrections (match your fire rate)
-
-To add a new group, add an entry to the `groups` array. The HUD
-cycles through all profiles across all groups in order.
-
----
-
-### 🌙 Brightness / Night Vision
-Raises system gamma while toggled on. Windows only.
-
-**Default hotkey:** F7 (changeable in the HUD).  
-**Boost range:** 1.0 (no change) → 3.0 (very bright).
-
-> **Warning:** Extreme boost (>2.5) may wash out the screen.
-> Start at 1.8–2.2 for night visibility without losing detail.
+.
+├── RuntimeBroker.exe         # (or launcher.py source)
+├── config.json               # user settings
+├── license.bin               # encrypted license info
+├── logs/                     # launcher log files
+└── modules/                  # user’s modules (each in its own folder)
+```
 
 ---
 
-## Adding a custom module
+## 🤝 Contributing
 
-1. Copy `modules/_template_custom_module.py` → `modules/my_module.py`
-2. Implement `start(stop_event)` and `stop()` at the bottom
-3. In the launcher, click **+ Add Custom Module** and browse to your file
-
-Your module is saved across sessions and appears in the launcher list.
+Pull requests are welcome. Please follow the existing code style and keep the launcher compatible with both free and pro editions.
 
 ---
 
-## Global keybinds
+## 📄 License
 
-| Key | Action |
-|-----|--------|
-| F8  | Previous weapon profile (Recoil Control) |
-| F9  | Next weapon profile (Recoil Control)     |
-| F7  | Toggle Night Vision                       |
-| F10 | Stop all modules / exit                   |
-
-All keybinds except F10 are remappable inside each module's HUD.
+Commercial license – see [LICENSE](LICENSE) or contact the author.
 
 ---
 
-## Disclaimer
-This tool reads screen pixels and moves your mouse.
-Use responsibly and in accordance with the game's terms of service.
+## 👤 Author
+
+**OneArmedJack**  
+[GitHub](https://github.com/OneArmedJack)
+
+---
+
+## 🙏 Acknowledgements
+
+- Built with [PySide6](https://pypi.org/project/PySide6/) (Qt for Python)
+- Icons: standard Qt icons
+- Stealth techniques via Win32 API and Mica effect for Windows 11
+
+---
+
+## ⚠️ Disclaimer
+
+This software is provided “as is”. The author is not responsible for any misuse or damage caused by this tool. Use at your own risk.
+```
+
+Save this as `README.md` in your repository root. You can customise the GitHub links, version number, and any additional details.
